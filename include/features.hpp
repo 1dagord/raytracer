@@ -3,6 +3,9 @@
 #include <cmath>
 #include <Eigen/Dense>
 
+// No longer using custom points and vectors, but
+// will keep code for reference
+
 
 class Tuple{
     public:

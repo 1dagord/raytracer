@@ -27,6 +27,7 @@ set(BOOST_DIR /usr/local/Cellar/boost/${BOOST_VERSION}/include)
 
 find_package(Eigen3 ${EIGEN_VERSION} REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
+find_package(wxWidgets REQUIRED COMPONENTS core base)
 
 include_directories(${EIGEN_DIR})
 include_directories(${BOOST_DIR})
@@ -35,11 +36,12 @@ include_directories(src)
 include_directories(include)
 
 set(SOURCES
-    src/main.cpp
+    src/cMain.cpp
+    src/cApp.cpp
     src/linalg.cpp
     src/features.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Boost::filesystem)
+target_link_libraries(${PROJECT_NAME} PRIVATE Boost::filesystem  wxWidgets::wxWidgets)
