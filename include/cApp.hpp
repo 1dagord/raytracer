@@ -9,7 +9,7 @@ class cApp : public wxApp{
         ~cApp();
 
     private:
-        cMain* mainframe = nullptr;
+        cMain* main_frame = nullptr;
 
     public:
         virtual bool OnInit();

@@ -12,8 +12,8 @@ cApp::~cApp () {
 };
 
 bool cApp::OnInit () {
-    mainframe = new cMain();
-    mainframe->Show();
+    main_frame = new cMain();
+    main_frame->Show();
     
     return true;
 }
