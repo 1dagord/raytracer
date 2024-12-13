@@ -5,7 +5,7 @@
 /*
     to use, run following commands:
         cd build/
-        cmake .. && cmake --build . && ./raytracer
+        cmake .. && cmake --build . && ./test_raytracer
 */
 
 wxBEGIN_EVENT_TABLE(cMain, wxFrame)
