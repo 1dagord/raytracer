@@ -2,46 +2,22 @@ cmake_minimum_required(VERSION 3.10)
 project(raytracer)
 set(CMAKE_CXX_STANDARD 11)
 
-if(POLICY CMP0167)
-  cmake_policy(SET CMP0167 NEW)
-endif()
 
-# include(FetchContent)
-
-# set(EIGEN_VERSION 3.4.0)
-# FetchContent_Declare(
-#     eigen3
-#     URL https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_VERSION}/eigen-${EIGEN_VERSION}.zip
-#     FIND_PACKAGE_ARGS ${EIGEN_VERSION}
-# )
-# FetchContent_MakeAvailable(eigen3)
-
-find_path(EIGEN_DIR NAMES signature_of_eigen3_matrix_library
-    PATHS
-    ~/Libraries/eigen-${EIGEN_VERSION}
-    PATH_SUFFIXES eigen3 eigen
-)
-
-set(BOOST_VERSION 1.86.0)
-set(BOOST_DIR /usr/local/Cellar/boost/${BOOST_VERSION}/include)
+set(EIGEN_VERSION 3.4.0)
+set(RAYLIB_VERSION 5.5)
 
 find_package(Eigen3 ${EIGEN_VERSION} REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system filesystem)
-find_package(wxWidgets REQUIRED COMPONENTS core base)
-
-include_directories(${EIGEN_DIR})
-include_directories(${BOOST_DIR})
+find_package(raylib ${RAYLIB_VERSION} REQUIRED)
 
 include_directories(src)
 include_directories(include)
 
 set(SOURCES
-    src/cMain.cpp
-    src/cApp.cpp
-    src/linalg.cpp
-    src/features.cpp
+	src/main.cpp
+	src/linalg.cpp
+	src/features.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Boost::filesystem  wxWidgets::wxWidgets)
+target_link_libraries(${PROJECT_NAME} raylib Eigen3::Eigen)

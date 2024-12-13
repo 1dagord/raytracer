@@ -9,4 +9,8 @@ class cMain : public wxFrame{
         wxButton* button1 = nullptr;
         wxTextCtrl* tbox1 = nullptr;
         wxListBox* lbox1 = nullptr;
+
+        void onButtonClicked(wxCommandEvent& evt);
+
+        wxDECLARE_EVENT_TABLE();
 };
