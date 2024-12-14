@@ -20,22 +20,13 @@ int main() {
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "RayTracer");
 	SetTargetFPS(60);
 
+	// Initialize tests from book
 	BookTest bt;
-	bt.ChapterOne();
+	bt.ChapterFour();
 
 
 	// while (!WindowShouldClose()) {
-    //     BeginDrawing();
-    //         ClearBackground(BLACK);
-	// 		DrawPixel(2, 3, RED);
-	// 		DrawCircle(10, 100, 2, BLUE);
-	// 		DrawCircle(4, 4, 2, PURPLE);
-    //         DrawText("Press 'S' to take a screenshot", 10, 10, 20, DARKGRAY);
-    //     EndDrawing();
-
-    //     if (IsKeyPressed(KEY_S)) {
-    //         createPPMFile();
-    //     }
+    //     bt.ChapterTwo();
     // }
 	// CloseWindow();
 

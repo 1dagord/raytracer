@@ -1,3 +1,5 @@
+#pragma once
+
 #include "linalg.hpp"
 
 
@@ -11,6 +13,6 @@ class BookTest {
     public:
         BookTest() {}
 
-        void ChapterOne();
         void ChapterTwo();
+        void ChapterFour();
 };
