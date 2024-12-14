@@ -449,4 +449,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 # ----- Custom -----
-build/.cmake
+build/.*/
