@@ -10,7 +10,25 @@
 #include "chapter_tests.hpp"
 #include "linalg.hpp"
 #include "save_ppm.hpp"
+#include "render_objects.hpp"
 
+
+void BookTest::ChapterFive() {
+    p = Point(2, 3, 4);
+    v = Vector(1, 0, 0);
+    RTRay r(p, v);
+    p_output = Point(2, 3, 4);
+    assert(r.position(0).operator==(p_output));     // Must use to avoid ambiguity
+
+    p_output = Point(3, 3, 4);
+    assert(r.position(1).operator==(p_output));
+
+    p_output = Point(1, 3, 4);
+    assert(r.position(-1).operator==(p_output));
+
+    p_output = Point(4.5, 3, 4);
+    assert(r.position(2.5).operator==(p_output));
+}
 
 void BookTest::ChapterFour_Clock() {
     time_t now;

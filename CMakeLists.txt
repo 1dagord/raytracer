@@ -22,6 +22,7 @@ set(SOURCES
 	src/save_ppm.cpp
 	src/linalg.cpp
 	src/chapter_tests.cpp
+	src/render_objects.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

@@ -6,6 +6,7 @@
 #include "main.hpp"
 #include "save_ppm.hpp"
 #include "chapter_tests.hpp"
+#include "render_objects.hpp"
 
 using Eigen::Vector4f;
 using Eigen::Matrix4f;
@@ -22,14 +23,14 @@ int main() {
 
 	// Initialize tests from book
 	BookTest bt;
-	bt.ChapterFour();
+	// bt.ChapterFour();
+	bt.ChapterFive();
 
-
-	while (!WindowShouldClose()) {
-        // bt.ChapterTwo();
-		bt.ChapterFour_Clock();
-    }
-	CloseWindow();
+	// while (!WindowShouldClose()) {
+    //     // bt.ChapterTwo();
+	// 	bt.ChapterFour_Clock();
+    // }
+	// CloseWindow();
 
 	return 0;
 }
