@@ -13,6 +13,11 @@ fs::path root_path = fs::current_path().parent_path();
 fs::path file_path = root_path / "window_bytecode.cpp";
 
 
+/**
+ * Creates a .ppm file in directory build/output/
+ * 
+ * @param file_name_no_ext: name of output file, defaults to "screen"
+ */
 void createPPMFile(std::string file_name_no_ext) {
     // default pixel format: PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
 

@@ -12,22 +12,62 @@
 #include "save_ppm.hpp"
 #include "render_objects.hpp"
 
+#define BOOST_DISABLE_ASSERTS   // only use macro-defined assert
+
 
 void BookTest::ChapterFive() {
-    p = Point(2, 3, 4);
-    v = Vector(1, 0, 0);
-    RTRay r(p, v);
+    // Testing position(...)
+    RTRay r(Point{2, 3, 4}, Vector{1, 0, 0});
     p_output = Point(2, 3, 4);
-    assert(r.position(0).operator==(p_output));     // Must use to avoid ambiguity
+    assert(r.position(0) == p_output);     // Must use to avoid ambiguity
 
     p_output = Point(3, 3, 4);
-    assert(r.position(1).operator==(p_output));
+    assert(r.position(1) == p_output);
 
     p_output = Point(1, 3, 4);
-    assert(r.position(-1).operator==(p_output));
+    assert(r.position(-1) == p_output);
 
     p_output = Point(4.5, 3, 4);
-    assert(r.position(2.5).operator==(p_output));
+    assert(r.position(2.5) == p_output);
+
+    // Testing intersect(...): ray origin outside sphere
+    r = RTRay(Point{0, 0, -5}, Vector{0, 0, 1});
+    RTSphere s;
+    std::vector<float> points = s.intersect(r);
+    assert(points.size() == 2);
+    assert((std::vector<float>{4.0, 6.0} == points));
+
+    r = RTRay(Point{0, 1, -5}, Vector{0, 0, 1});
+    points = s.intersect(r);
+    assert(points.size() == 2);
+    assert((std::vector<float>{5.0, 5.0} == points));
+
+    r = RTRay(Point{0, 2, -5}, Vector{0, 0, 1});
+    points = s.intersect(r);
+    assert(points.empty());
+
+    // Testing intersect(...): ray origin inside sphere
+    r = RTRay(Point{0, 0, 0}, Vector{0, 0, 1});
+    points = s.intersect(r);
+    assert(points.size() == 2);
+    assert((std::vector<float>{-1.0, 1.0} == points));
+
+    // Testing intersect(...): sphere behind ray
+    r = RTRay(Point{0, 0, 5}, Vector{0, 0, 1});
+    points = s.intersect(r);
+    assert(points.size() == 2);
+    assert((std::vector<float>{-6.0, -4.0} == points));
+
+    // Testing Intersection
+    Intersection<RTSphere> inter(3.5, s);
+    assert(inter.t == 3.5);
+    assert(inter.object == s);
+    assert(&(inter.object) == &s);
+
+    // Testing InterRecord
+    Intersection<RTSphere> inter1(1, s);
+    Intersection<RTSphere> inter2(2, s);
+    // InterRecord<Intersection<auto>> recs{};
 }
 
 void BookTest::ChapterFour_Clock() {
@@ -150,7 +190,7 @@ void BookTest::ChapterFour() {
     p_output = Point(0, sqrt(2) / 2, -sqrt(2) / 2);
     assert((inv_half_quarter_x * p).isApprox(p_output, THRESH));
 
-    // Y-axis
+    // Testing rotation: Y-axis
     p = Point(0, 0, 1);
     Matrix4f half_quarter_y = rotation_y(EIGEN_PI / 4);
     Matrix4f full_quarter_y = rotation_y(EIGEN_PI / 2);
@@ -160,7 +200,7 @@ void BookTest::ChapterFour() {
     p_output = Point(1, 0, 0);
     assert((full_quarter_y * p).isApprox(p_output, THRESH)); 
 
-    // Z-axis
+    // Testing rotation: Z-axis
     p = Point(0, 1, 0);
     Matrix4f half_quarter_z = rotation_z(EIGEN_PI / 4);
     Matrix4f full_quarter_z = rotation_z(EIGEN_PI / 2);
