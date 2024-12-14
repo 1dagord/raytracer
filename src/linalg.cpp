@@ -42,6 +42,15 @@ Matrix4f scaling (float x, float y, float z) {
 	return A;
 }
 
+Matrix4f scaling (float val) {
+	Matrix4f A = Matrix4f::Identity(4, 4);
+	A(0, 0) = val;
+	A(1, 1) = val;
+	A(2, 2) = val;
+
+	return A;
+}
+
 
 /**
  * @param rad: rotation angle in radians

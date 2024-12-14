@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <raylib.h>
 
+#include "save_ppm.hpp"
+
 namespace fs = std::filesystem;
 
 // Set path of saved image
@@ -11,7 +13,7 @@ fs::path root_path = fs::current_path().parent_path();
 fs::path file_path = root_path / "window_bytecode.cpp";
 
 
-void createPPMFile() {
+void createPPMFile(std::string file_name_no_ext) {
     // default pixel format: PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
 
     // Get window position and size
@@ -35,16 +37,16 @@ void createPPMFile() {
     }
 
     // Create and populate .ppm file
-    std::string save_path = (root_path / fs::path("src/output/screen.ppm"));
+    std::string save_path = (root_path / fs::path("src/output/" + file_name_no_ext + ".ppm"));
     std::ofstream out_file(save_path);
 
     // Write header to .ppm file
-    out_file << "P3" << std::endl;
-    out_file << window_width << " " << window_height << std::endl;
+    out_file << "P3\n";
+    out_file << window_width << " " << window_height << "\n";
     if (screen_image.format == PIXELFORMAT_UNCOMPRESSED_R16G16B16) {
-        out_file << 65535 << std::endl;
+        out_file << 65535 << "\n";
     } else {
-        out_file << 255 << std::endl;
+        out_file << 255 << "\n";
     }
     
     // Populate .ppm file with byte data

@@ -60,6 +60,7 @@ class Point : public Tuple {
 
 Matrix4f translation (float x, float y, float z);
 Matrix4f scaling (float x, float y, float z);
+Matrix4f scaling (float val);
 Matrix4f rotation_x (float rad);
 Matrix4f rotation_y (float rad);
 Matrix4f rotation_z (float rad);

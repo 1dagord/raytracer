@@ -25,10 +25,11 @@ int main() {
 	bt.ChapterFour();
 
 
-	// while (!WindowShouldClose()) {
-    //     bt.ChapterTwo();
-    // }
-	// CloseWindow();
+	while (!WindowShouldClose()) {
+        // bt.ChapterTwo();
+		bt.ChapterFour_Clock();
+    }
+	CloseWindow();
 
 	return 0;
 }

@@ -1,1 +1,1 @@
-void createPPMFile();
+void createPPMFile(std::string file_name_no_ext="screen");
