@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <filesystem>
 #include <raylib.h>
@@ -47,11 +48,17 @@ void createPPMFile() {
     }
     
     // Populate .ppm file with byte data
+    int char_count = 0;
     for (int i = 0; i < 4 * window_width * window_height; i += 4) {
+        // ensure line length < 70
+        char_count += 3;
+        if (char_count >= 70)
+            out_file << "\n";
+            char_count = 0;
         // skip alpha channel, only write RGB
         for (int z = 0; z < 3; z++) {
             // cast bytes to decimal
-            out_file << std::setw(2) << std::setfill('0') 
+            out_file << std::setfill('0') << std::setw(3)
                 << static_cast<int>(byte_array[i + z])
                 << ((i != 0 && i % (4 * window_width) == 0) ? ("\n") : (" "));
         }

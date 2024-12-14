@@ -20,6 +20,8 @@ include_directories(include)
 set(SOURCES
 	src/main.cpp
 	src/save_ppm.cpp
+	src/linalg.cpp
+	src/chapter_tests.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
