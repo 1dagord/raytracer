@@ -30,6 +30,10 @@ int main() {
         // bt.ChapterTwo();
 		// bt.ChapterFour_Clock();
 		bt.ChapterFive_Shadow();
+
+		if (IsKeyPressed(KEY_S)) {
+			createPPMFile();
+		}
     }
 	CloseWindow();
 

@@ -19,27 +19,39 @@
 
 
 void BookTest::ChapterFive_Shadow() {
-    Point ray_origin(0, 0, -5);
+    Point ray_origin(0.0, 0.0, -5.0);
     Point position;
     RTSphere shape;
 
-    int wall_z = 10;
+    // Shrink along X-axis
+    // shape.transformation = scaling(1, 0.5, 1);
+
+    // Shrink along Y-axis
+    // shape.transformation = scaling(0.5, 1, 1);
+
+    // Shrink and rotate
+    // shape.transformation = rotation_z(EIGEN_PI / 4) * scaling(0.5, 1, 1);
+
+    // Shrink and skew
+    shape.transformation = shearing(1, 0, 0, 0, 0, 0) * scaling(0.5, 1, 1);
+
+    float wall_z = 10.0;
     float wall_size = 7.0;
     float h_wall_size = wall_size / 2;
-    int canvas_pixels = WINDOW_WIDTH;
+    float canvas_pixels = WINDOW_WIDTH;
     float pixel_size = wall_size / canvas_pixels;
 
-    int world_x = 0, world_y = 0;
+    float world_x = 0, world_y = 0;     // must be floats to produce smooth image
     Vector vec;
     RTRay r;
     InterRecord xs;
 
     BeginDrawing();
         ClearBackground(BLACK);
-        for (int y = 0; y < canvas_pixels; y++) {
+        for (float y = 0; y < WINDOW_HEIGHT; y++) {
             world_y = h_wall_size - (pixel_size * y);
 
-            for (int x = 0; x < canvas_pixels; x++) {
+            for (float x = 0; x < WINDOW_WIDTH; x++) {
                 world_x = -h_wall_size + (pixel_size * x);
                 position = Point(world_x, world_y, wall_z);
                 vec = position - ray_origin;
@@ -189,8 +201,6 @@ void BookTest::ChapterFour_Clock() {
     // Store current date and time
     time(&now);
     datetime = ctime(&now);
-
-    std::cout << datetime << "\n";
 
     // Obtain time from `datetime`
     std::vector<std::string> words;
