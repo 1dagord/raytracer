@@ -10,17 +10,7 @@ using Eigen::Matrix4f;
 // Used to account for floating-point error
 const float THRESH = 1e-6;
 
-class Tuple : virtual public Vector4f {
-    public:
-        // template<typename OtherDerived>
-        // bool operator==(const Eigen::MatrixBase <OtherDerived>& other) {
-        //     for (int i = 0; i < 4; i++) {
-        //         if ((*this)(i) != other(i))
-        //             return false;
-        //     }
-        //     return true;
-        // }
-};
+class Tuple : virtual public Vector4f {};
 
 class Vector : public Tuple {
     public:

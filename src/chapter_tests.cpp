@@ -3,6 +3,8 @@
 #include <ctime>
 #include <vector>
 #include <string>
+#include <any>
+#include <typeinfo>
 #include <raylib.h>
 #include <Eigen/Dense>
 #include <boost/algorithm/string.hpp>
@@ -12,8 +14,12 @@
 #include "save_ppm.hpp"
 #include "render_objects.hpp"
 
-#define BOOST_DISABLE_ASSERTS   // only use macro-defined assert
+#define BOOST_DISABLE_ASSERTS   // only use std macro-defined assert
 
+
+void BookTest::ChapterFive_Shadow() {
+    
+}
 
 void BookTest::ChapterFive() {
     // Testing position(...)
@@ -33,41 +39,112 @@ void BookTest::ChapterFive() {
     // Testing intersect(...): ray origin outside sphere
     r = RTRay(Point{0, 0, -5}, Vector{0, 0, 1});
     RTSphere s;
-    std::vector<float> points = s.intersect(r);
+    std::vector<float> points = r.intersect_float(s);
     assert(points.size() == 2);
     assert((std::vector<float>{4.0, 6.0} == points));
 
     r = RTRay(Point{0, 1, -5}, Vector{0, 0, 1});
-    points = s.intersect(r);
+    points = r.intersect_float(s);
     assert(points.size() == 2);
     assert((std::vector<float>{5.0, 5.0} == points));
 
     r = RTRay(Point{0, 2, -5}, Vector{0, 0, 1});
-    points = s.intersect(r);
+    points = r.intersect_float(s);
     assert(points.empty());
 
     // Testing intersect(...): ray origin inside sphere
     r = RTRay(Point{0, 0, 0}, Vector{0, 0, 1});
-    points = s.intersect(r);
+    points = r.intersect_float(s);
     assert(points.size() == 2);
     assert((std::vector<float>{-1.0, 1.0} == points));
 
     // Testing intersect(...): sphere behind ray
     r = RTRay(Point{0, 0, 5}, Vector{0, 0, 1});
-    points = s.intersect(r);
+    points = r.intersect_float(s);
     assert(points.size() == 2);
     assert((std::vector<float>{-6.0, -4.0} == points));
 
     // Testing Intersection
-    Intersection<RTSphere> inter(3.5, s);
+    Intersection inter(3.5, s);
     assert(inter.t == 3.5);
-    assert(inter.object == s);
-    assert(&(inter.object) == &s);
+    assert(downcast(inter.object) == downcast(s));  // downcast then compare objects
+    assert(&inter.object == &s);
 
     // Testing InterRecord
-    Intersection<RTSphere> inter1(1, s);
-    Intersection<RTSphere> inter2(2, s);
-    // InterRecord<Intersection<auto>> recs{};
+    Intersection inter1(1, s);
+    Intersection inter2(2, s);
+    InterRecord xs = {inter1, inter2};
+    assert(xs.size() == 2);
+    assert(xs[0].t == 1 && xs[1].t == 2);
+    xs.clear();
+
+    // Testing new intersect(...) *no float*
+    xs = r.intersect_no_mod(s);
+    assert(xs.size() == 2);
+    assert(downcast(xs[0].object) == downcast(s));
+    assert(downcast(xs[1].object) == downcast(s));
+    xs.clear();
+
+    // Testing hit(...)
+    xs = InterRecord{inter1, inter2};
+    assert(!hit(xs).empty() && hit(xs).at(0) == inter1);
+    xs.clear();
+
+    inter1 = Intersection(-1, s);
+    inter2 = Intersection(1, s);
+    xs = InterRecord{inter1, inter2};
+    assert(!hit(xs).empty() && hit(xs).at(0) == inter2);
+    xs.clear();
+
+    inter1 = Intersection(-2, s);
+    inter2 = Intersection(-1, s);
+    xs = InterRecord{inter1, inter2};
+    assert(hit(xs).empty());
+    xs.clear();
+
+    inter1 = Intersection(5, s);
+    inter2 = Intersection(7, s);
+    Intersection inter3(-3, s);
+    Intersection inter4(2, s);
+    xs = InterRecord{inter1, inter2, inter3, inter4};
+    assert(!hit(xs).empty() && hit(xs).at(0) == inter4);
+
+    // Testing transform(...): translation
+    r = RTRay(Point{1, 2, 3}, Vector{0, 1, 0});
+    Matrix4f m = translation(3, 4, 5);
+    RTRay r2 = r.transform(m);
+    p_output = Point(4, 6, 8);
+    assert(r2.origin == p_output);
+
+    v_output = Vector(0, 1, 0);
+    assert(r2.direction == v_output);
+
+    // Testing transform(...): scaling
+    m = scaling(2, 3, 4);
+    r2 = r.transform(m);
+    p_output = Point(2, 6, 12);
+    assert(r2.origin == p_output);
+
+    v_output = Vector(0, 3, 0);
+    assert(r2.direction == v_output);
+
+    // Testing transformation
+    assert(s.transformation == Matrix4f::Identity(4, 4));
+    s.transformation = translation(2, 3, 4);
+    assert(s.transformation == translation(2, 3, 4));
+
+    // Testing new intersect(...): ray modification
+    r = RTRay(Point(0, 0, -5), Vector(0, 0, 1));
+    s = RTSphere();
+    s.transformation = scaling(2, 2, 2);
+    xs = r.intersect(s);
+    assert(xs.size() == 2);
+    assert(xs.at(0).t == 3 && xs.at(1).t == 7);
+    xs.clear();
+
+    s.transformation = translation(5, 0, 0);
+    xs = r.intersect(s);
+    assert(xs.empty());
 }
 
 void BookTest::ChapterFour_Clock() {

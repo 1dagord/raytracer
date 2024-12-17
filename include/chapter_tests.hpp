@@ -17,4 +17,5 @@ class BookTest {
         void ChapterFour();
         void ChapterFour_Clock();
         void ChapterFive();
+        void ChapterFive_Shadow();
 };

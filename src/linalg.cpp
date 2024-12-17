@@ -9,10 +9,10 @@ using Eigen::Matrix4f;
 /**
  * @return: Translation matrix of form
  * 
- *          [1  0  0  x]
- *          [0  1  0  y]
- *          [0  0  1  z]
- *          [0  0  0  1]
+ *          [1		0		0		x]
+ *          [0		1		0		y]
+ *          [0		0		1		z]
+ *          [0		0		0		1]
  */
 Matrix4f translation (float x, float y, float z) {
 	Matrix4f A = Matrix4f::Identity(4, 4);
@@ -26,10 +26,10 @@ Matrix4f translation (float x, float y, float z) {
 /**
  * @return: Scaling matrix of form
  * 
- *          [x  0  0  0]
- *          [0  y  0  0]
- *          [0  0  z  0]
- *          [0  0  0  1]
+ *          [x		0		0		0]
+ *          [0		y		0		0]
+ *          [0		0		z		0]
+ *          [0		0		0		1]
  * 
  *          Reflection is a rotation where at least
  *          one of the values x, y, z is negated
@@ -58,10 +58,10 @@ Matrix4f scaling (float val) {
  * @return: Rotation matrix around x axis.
  *          Has form
  * 
- *          [1  0       0       0]
- *          [0  cos(r)  -sin(r) 0]
- *          [0  sin(r)  cos(r)  0]
- *          [0  0       0       1]
+ *          [1			0			0			0]
+ *          [0			cos(r)		-sin(r)		0]
+ *          [0			sin(r)		cos(r)		0]
+ *          [0			0			0			1]
  */
 Matrix4f rotation_x (float rad) {
 	Matrix4f A = Matrix4f::Identity(4, 4);
@@ -79,10 +79,10 @@ Matrix4f rotation_x (float rad) {
  * @return: Rotation matrix around y axis.
  *          Has form
  * 
- *          [cos(r)		0	sin(r)	0]
- *          [0  		1	0		0]
- *          [-sin(r)	0	cos(r)  0]
- *          [0			0	0       1]
+ *          [cos(r)		0			sin(r)		0]
+ *          [0			1			0			0]
+ *          [-sin(r)	0			cos(r)		0]
+ *          [0			0			0			1]
  */
 Matrix4f rotation_y (float rad) {
 	Matrix4f A = Matrix4f::Identity(4, 4);
@@ -100,10 +100,10 @@ Matrix4f rotation_y (float rad) {
  * @return: Rotation matrix around z axis.
  *          Has form
  *          
- * 			[cos(r)	-sin(r)	0	0]
- *          [sin(r) cos(r)	0	0]
- *          [0		0		1	0]
- *          [0		0		0	1]
+ * 			[cos(r)		-sin(r)		0			0]
+ *          [sin(r)		cos(r)		0			0]
+ *          [0			0			1			0]
+ *          [0			0			0			1]
  */
 Matrix4f rotation_z (float rad) {
 	Matrix4f A = Matrix4f::Identity(4, 4);
@@ -119,10 +119,10 @@ Matrix4f rotation_z (float rad) {
 /**
  * @return: Shearing matrix of form
  *          
- * 			[1		x_y		x_z		0]
- * 			[y_x	1		y_z		0]
- * 			[z_x	z_y		1		0]
- * 			[0		0		0		1]
+ * 			[1			x_y			x_z		0]
+ * 			[y_x		1			y_z		0]
+ * 			[z_x		z_y			1		0]
+ * 			[0			0			0		1]
  */
 Matrix4f shearing (float x_y,
 				   float x_z,

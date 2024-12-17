@@ -24,13 +24,14 @@ int main() {
 	// Initialize tests from book
 	BookTest bt;
 	// bt.ChapterFour();
-	bt.ChapterFive();
+	// bt.ChapterFive();
 
-	// while (!WindowShouldClose()) {
-    //     // bt.ChapterTwo();
-	// 	bt.ChapterFour_Clock();
-    // }
-	// CloseWindow();
+	while (!WindowShouldClose()) {
+        // bt.ChapterTwo();
+		// bt.ChapterFour_Clock();
+		bt.ChapterFive_Shadow();
+    }
+	CloseWindow();
 
 	return 0;
 }
