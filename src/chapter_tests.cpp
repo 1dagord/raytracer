@@ -13,12 +13,47 @@
 #include "linalg.hpp"
 #include "save_ppm.hpp"
 #include "render_objects.hpp"
+#include "main.hpp"
 
 #define BOOST_DISABLE_ASSERTS   // only use std macro-defined assert
 
 
 void BookTest::ChapterFive_Shadow() {
-    
+    Point ray_origin(0, 0, -5);
+    Point position;
+    RTSphere shape;
+
+    int wall_z = 10;
+    float wall_size = 7.0;
+    float h_wall_size = wall_size / 2;
+    int canvas_pixels = WINDOW_WIDTH;
+    float pixel_size = wall_size / canvas_pixels;
+
+    int world_x = 0, world_y = 0;
+    Vector vec;
+    RTRay r;
+    InterRecord xs;
+
+    BeginDrawing();
+        ClearBackground(BLACK);
+        for (int y = 0; y < canvas_pixels; y++) {
+            world_y = h_wall_size - (pixel_size * y);
+
+            for (int x = 0; x < canvas_pixels; x++) {
+                world_x = -h_wall_size + (pixel_size * x);
+                position = Point(world_x, world_y, wall_z);
+                vec = position - ray_origin;
+                vec.normalize();
+            
+                r = RTRay(ray_origin, vec);
+                xs = r.intersect(shape);
+
+                if (!xs.empty() && !hit(xs).empty()) {
+                    DrawPixel(x, y, RED);
+                }
+            }
+        }
+    EndDrawing();
 }
 
 void BookTest::ChapterFive() {
