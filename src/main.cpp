@@ -17,6 +17,7 @@ using Eigen::Matrix4f;
 		cmake .. && cmake --build . && ./raytracer
 */
 
+
 int main() {
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "RayTracer");
 	SetTargetFPS(60);
@@ -25,11 +26,13 @@ int main() {
 	BookTest bt;
 	// bt.ChapterFour();
 	// bt.ChapterFive();
+	// bt.ChapterSix();
 
 	while (!WindowShouldClose()) {
         // bt.ChapterTwo();
 		// bt.ChapterFour_Clock();
-		bt.ChapterFive_Shadow();
+		// bt.ChapterFive_Shadow();
+		bt.ChapterSix_Shading();
 
 		if (IsKeyPressed(KEY_S)) {
 			createPPMFile();

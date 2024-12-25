@@ -3,9 +3,9 @@
 // Class Methods
 
 Point RTRay::position(float t) {
-	Point* res = new Point();
-	*res = this->origin + (this->direction * t);
-	return *res;
+	Point res;
+	res = this->origin + (this->direction * t);
+	return res;
 }
 
 std::vector<float> RTRay::intersect_float(RTObject& obj) {
@@ -101,6 +101,21 @@ RTRay RTRay::transform(Matrix4f& m) {
 	return *res;
 }
 
+Vector RTSphere::normal_at(Point world_point) {
+	Vector res;
+	Point object_point, object_normal, world_normal;
+
+	object_point = this->transformation.inverse() * world_point;
+	object_normal = object_point - this->origin;
+	world_normal = this->transformation.inverse().transpose() * object_normal;
+
+	res = *(dynamic_cast<Tuple*>(&world_normal));
+	res = (Vector)res;
+	res(3) = 0;
+	res.normalize();
+	return res;
+}
+
 // Non-class Methods
 
 /**
@@ -121,4 +136,79 @@ InterRecord hit(InterRecord& record) {
 		}
 	}
 	return res;
+}
+
+RTColor lighting(RTMaterial& mat, PointLight& light, Point& p, Vector& eye_vec, Vector& normal_vec) {
+	// Combine surface color with light color's intensity
+	RTColor effective_color;
+	for (int i = 0; i < 3; i++)
+		effective_color.at(i) = mat.color.at(i) * light.intensity.at(i);
+
+	// Find direction to light source
+	Vector light_vec;
+	Point light_point;
+	light_point = light.origin - p;
+	light_vec = *(dynamic_cast<Tuple*>(&light_point));
+	light_vec = (Vector)light_vec;
+	light_vec(3) = 0;
+	light_vec.normalize();
+
+	// Compute ambient contribution
+	RTColor ambient, diffuse, specular;
+	for (int i = 0; i < 3; i++) {
+		ambient.at(i) = effective_color.at(i) * mat.ambient;
+	}
+
+	float light_dot_normal = light_vec.dot(normal_vec);
+
+	if (light_dot_normal < 0) {
+		diffuse = {0, 0, 0};
+		specular = {0, 0, 0};
+	} else {
+		for (int i = 0; i < 3; i++) {
+			diffuse.at(i) = effective_color.at(i) * mat.diffuse * light_dot_normal;
+		}
+		Vector neg_light_vec;
+		neg_light_vec = -1 * light_vec;
+		Vector reflect_vec = neg_light_vec.reflect(normal_vec);
+		float reflect_dot_eye = reflect_vec.dot(eye_vec);
+
+		if (reflect_dot_eye <= 0) {
+			specular = {0, 0, 0};
+		} else {
+			// Compute specular contribution
+			float factor = std::powf(reflect_dot_eye, mat.shininess);
+			// std::cout << reflect_dot_eye << std::endl;
+			// ----- PROBLEM IS HERE -----
+			for (int i = 0; i < 3; i++) {
+				specular.at(i) = light.intensity.at(i) * mat.specular * factor;
+			}
+			// ----- PROBLEM IS HERE -----
+			// auto it = std::max_element(specular.begin(), specular.end());
+			// std::cout << *it << "\n";
+		}
+	}
+
+	RTColor res;
+	for (int i = 0; i < 3; i++) {
+		res.at(i) = ambient.at(i) + diffuse.at(i) + specular.at(i);
+	}
+
+	// auto it1 = std::max_element(ambient.begin(), ambient.end());
+	// auto it2 = std::max_element(diffuse.begin(), diffuse.end());
+	// auto it3 = std::max_element(specular.begin(), specular.end());
+	// auto it4 = std::max_element(res.begin(), res.end());
+	// // auto it5 = std::min_element(res.begin(), res.end());
+
+	// // for (int i = 0; i < 3; i++)
+	// // 	res.at(i) = ((res.at(i) - *it5) / (*it4 - *it5));
+
+	// Print resulting color
+	// for (float v : res)
+	// 	std::cout << v << " ";
+	// std::cout << std::endl;
+
+	// std::cout << *it1 << "\t\t" << *it2 << "\t\t" << *it3 << "\t\t" << *it4 <<"\n";
+
+    return res;
 }

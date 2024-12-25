@@ -18,6 +18,171 @@
 #define BOOST_DISABLE_ASSERTS   // only use std macro-defined assert
 
 
+// PROBLEM: area where specular reflection
+// should be white is green
+void BookTest::ChapterSix_Shading() {
+    Point ray_origin(0.0, 0.0, -5.0);
+    Point position;
+    RTSphere sphere;
+    sphere.material.color = RTColor{1, 0.2, 1};
+
+    Point light_position(-10, 10, -10);
+    RTColor light_color = RTColor{1, 1, 1};
+    PointLight light(light_position, light_color);
+
+    float wall_z = 10.0;
+    float wall_size = 7.0;
+    float h_wall_size = wall_size / 2;
+    float canvas_pixels = WINDOW_WIDTH;
+    float pixel_size = wall_size / canvas_pixels;
+
+    float world_x = 0, world_y = 0;     // must be floats to produce smooth image
+    Vector vec, normal_vec, eye_vec;
+    RTRay r;
+    Point p;
+    InterRecord xs, h;
+    RTColor color;
+    Color obj_color;
+
+    BeginDrawing();
+        ClearBackground(BLACK);
+        for (float y = 0; y < WINDOW_HEIGHT; y++) {
+            world_y = h_wall_size - (pixel_size * y);
+
+            for (float x = 0; x < WINDOW_WIDTH; x++) {
+                world_x = -h_wall_size + (pixel_size * x);
+                position = Point(world_x, world_y, wall_z);
+                vec = position - ray_origin;
+                vec.normalize();
+            
+                r = RTRay(ray_origin, vec);
+                xs = r.intersect(sphere);
+
+                if (!xs.empty() && !hit(xs).empty()) {
+                    h = hit(xs);
+                    p = r.position(h.at(0).t);
+                    normal_vec = to_sphere(h.at(0).object)->normal_at(p);
+                    r.direction.normalize();
+                    eye_vec = -1 * r.direction;     // when not negated, no artifact, but also no reflection
+                    RTMaterial mat = to_sphere(h.at(0).object)->material;
+                    color = lighting(mat, light, p, eye_vec, normal_vec);
+
+                    // for (int i = 0; i < 3; i++)
+                    //     std::cout << color.at(i) << " ";
+                    // std::cout << "\n";
+
+                    obj_color.r = static_cast<uint8_t>(color.at(0) * 255);
+                    obj_color.g = static_cast<uint8_t>(color.at(1) * 255);
+                    obj_color.b = static_cast<uint8_t>(color.at(2) * 255);
+                    obj_color.a = static_cast<uint8_t>(255);
+
+                    // std::cout << obj_color.r << "\t";
+                    // std::cout << obj_color.g << "\t";
+                    // std::cout << obj_color.b << "\t";
+                    // std::cout << obj_color.a << "\t";
+                    // std::cout << "\n";
+
+                    DrawPixel(x, y, obj_color);
+                }
+            }
+        }
+    EndDrawing();
+}
+
+void BookTest::ChapterSix() {
+    // Testing normal_at(...)
+    RTSphere s;
+    Vector n;
+    n = s.normal_at(Point(1, 0, 0));
+    assert(n.isApprox(Vector(1, 0, 0), THRESH));
+
+    n = s.normal_at(Point(0, 1, 0));
+    assert(n.isApprox(Vector(0, 1, 0), THRESH));
+
+    n = s.normal_at(Point(0, 0, 1));
+    assert(n.isApprox(Vector(0, 0, 1), THRESH));
+
+    n = s.normal_at(Point(std::sqrt(3) / 3, std::sqrt(3) / 3, std::sqrt(3) / 3));
+    assert(n.isApprox(Vector(std::sqrt(3) / 3, std::sqrt(3) / 3, std::sqrt(3) / 3), THRESH));  // floating point error
+    Vector norm_n;
+    norm_n = n;
+    norm_n.normalize();
+    assert(n.isApprox(norm_n, THRESH));
+
+    s.transformation = translation(0, 1, 0);
+    n = s.normal_at(Point(0, 1.70711, -0.70711));
+    assert(n.isApprox(Vector(0, 0.70711, -0.70711)));
+
+    s.transformation = scaling(1, 0.5, 1) * rotation_z(EIGEN_PI / 5);
+    n = s.normal_at(Point(0, std::sqrt(2) / 2, -std::sqrt(2) / 2));
+    assert(n.isApprox(Vector(0, 0.97014, -0.24254)));
+
+    // Testing reflect(...)
+    Vector v(1, -1, 0);
+    n = Vector(0, 1, 0);
+    Vector r = v.reflect(n);
+    assert(r.isApprox(Vector(1, 1, 0), THRESH));
+
+    v = Vector(0, -1, 0);
+    n = Vector(std::sqrt(2) / 2, std::sqrt(2) / 2, 0);
+    r = v.reflect(n);
+    assert(r.isApprox(Vector(1, 0, 0), THRESH));
+
+    // Testing PointLight
+    PointLight pl(Point(), {1, 1, 1});
+    RTColor output{1, 1, 1};
+    assert(pl.origin == Point());
+    assert(pl.intensity == output);
+
+    // Testing RTMaterial
+    RTMaterial mat;
+    assert(mat.color == output);
+    assert(equals(mat.ambient, 0.1));
+    assert(equals(mat.diffuse, 0.9));
+    assert(equals(mat.specular, 0.9));
+    assert(equals(mat.shininess, 200.0));
+
+    s = RTSphere();
+    assert(s.material == RTMaterial());
+    mat = RTMaterial();
+    mat.ambient = 1;
+    s.material = mat;
+    assert(s.material == mat);
+    assert(s.material.ambient == 1);
+
+    // Testing lighting(...)
+    // light behind eye, both opposite surface
+    Vector eye_vec(0, 0, -1);
+    Vector normal_vec(0, 0, -1);
+    PointLight light(Point(0, 0, -10), RTColor{1, 1, 1});
+    Point p;
+    mat = RTMaterial();
+    RTColor res = lighting(mat, light, p, eye_vec, normal_vec);
+    assert((res == RTColor{1.9, 1.9, 1.9}));
+
+    // eye between light and surface, eye offset 45º
+    eye_vec = Vector(0, sqrt(2) / 2, -sqrt(2) / 2);
+    res = lighting(mat, light, p, eye_vec, normal_vec);
+    assert((res == RTColor{1.0, 1.0, 1.0}));
+
+    // light w eye opposite surface, light offset 45º
+    eye_vec = Vector(0, 0, -1);
+    light = PointLight(Point(0, 10, -10), RTColor{1, 1, 1});
+    res = lighting(mat, light, p, eye_vec, normal_vec);
+    assert(equals(res, RTColor{0.7364, 0.7364, 0.7364}));
+
+    // eye in path of light's reflection vector
+    eye_vec = Vector(0, -sqrt(2) / 2, -sqrt(2) / 2);
+    res = lighting(mat, light, p, eye_vec, normal_vec);
+    assert(equals(res, RTColor{1.6364, 1.6364, 1.6364}));
+
+    // surface between light and eye
+    eye_vec = Vector(0, 0, -1);
+    light = PointLight(Point(0, 0, 10), RTColor{1, 1, 1});
+    res = lighting(mat, light, p, eye_vec, normal_vec);
+    assert(equals(res, RTColor{0.1, 0.1, 0.1}));
+}
+
 void BookTest::ChapterFive_Shadow() {
     Point ray_origin(0.0, 0.0, -5.0);
     Point position;
@@ -302,21 +467,21 @@ void BookTest::ChapterFour() {
     p = Point(0, 1, 0);
     Matrix4f half_quarter_x = rotation_x(EIGEN_PI / 4);
     Matrix4f full_quarter_x = rotation_x(EIGEN_PI / 2);
-    p_output = Point(0, sqrt(2) / 2, sqrt(2) / 2);
+    p_output = Point(0, std::sqrt(2) / 2, std::sqrt(2) / 2);
     assert((half_quarter_x * p).isApprox(p_output, THRESH));    // Account for floating point error
 
     p_output = Point(0, 0, 1);
     assert((full_quarter_x * p).isApprox(p_output, THRESH));
 
     Matrix4f inv_half_quarter_x = half_quarter_x.inverse();
-    p_output = Point(0, sqrt(2) / 2, -sqrt(2) / 2);
+    p_output = Point(0, std::sqrt(2) / 2, -std::sqrt(2) / 2);
     assert((inv_half_quarter_x * p).isApprox(p_output, THRESH));
 
     // Testing rotation: Y-axis
     p = Point(0, 0, 1);
     Matrix4f half_quarter_y = rotation_y(EIGEN_PI / 4);
     Matrix4f full_quarter_y = rotation_y(EIGEN_PI / 2);
-    p_output = Point(sqrt(2) / 2, 0, sqrt(2) / 2);
+    p_output = Point(std::sqrt(2) / 2, 0, std::sqrt(2) / 2);
     assert((half_quarter_y * p).isApprox(p_output, THRESH));
 
     p_output = Point(1, 0, 0);
@@ -326,7 +491,7 @@ void BookTest::ChapterFour() {
     p = Point(0, 1, 0);
     Matrix4f half_quarter_z = rotation_z(EIGEN_PI / 4);
     Matrix4f full_quarter_z = rotation_z(EIGEN_PI / 2);
-    p_output = Point(-(sqrt(2) / 2), sqrt(2) / 2, 0);
+    p_output = Point(-(std::sqrt(2) / 2), std::sqrt(2) / 2, 0);
     assert((half_quarter_z * p).isApprox(p_output, THRESH));
 
     p_output = Point(-1, 0, 0);

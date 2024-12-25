@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef CHAPTER_TESTS_H
+#define CHAPTER_TESTS_H
+
 #include "linalg.hpp"
 
 
@@ -18,4 +21,8 @@ class BookTest {
         void ChapterFour_Clock();
         void ChapterFive();
         void ChapterFive_Shadow();
+        void ChapterSix();
+        void ChapterSix_Shading();
 };
+
+#endif

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef LINALG_H
+#define LINALG_H
+
 #include <cmath>
 #include <Eigen/Dense>
 
@@ -7,10 +10,23 @@ using Eigen::Vector4f;
 using Eigen::Matrix4f;
 
 
-// Used to account for floating-point error
-const float THRESH = 1e-6;
+class Tuple : virtual public Vector4f {
+    public:
+        float magnitude() {
+            return (
+                std::sqrt(
+                    (*this).dot(*this) - (*this)(3)
+                )
+            );
+        }
 
-class Tuple : virtual public Vector4f {};
+        void normalize() {
+            float mag = magnitude();
+            (*this)(0) /= mag;
+            (*this)(1) /= mag;
+            (*this)(2) /= mag;
+        }
+};
 
 class Vector : public Tuple {
     public:
@@ -21,6 +37,13 @@ class Vector : public Tuple {
         Vector () :
         Vector4f (0, 0, 0, 0)
         {}
+
+        Vector reflect(Vector& normal) {
+            Vector res;
+            res = normal * 2 * ((*this).dot(normal));
+            res = (*this) - res;
+            return res;
+        }
 
         // allow assignment from Eigen's Vector class
         template<typename OtherDerived>
@@ -61,3 +84,5 @@ Matrix4f shearing (float x_y,
 				   float z_x,
 				   float z_y
 				  );
+
+#endif
