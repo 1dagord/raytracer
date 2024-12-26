@@ -67,20 +67,10 @@ void BookTest::ChapterSix_Shading() {
                     RTMaterial mat = to_sphere(h.at(0).object)->material;
                     color = lighting(mat, light, p, eye_vec, normal_vec);
 
-                    // for (int i = 0; i < 3; i++)
-                    //     std::cout << color.at(i) << " ";
-                    // std::cout << "\n";
-
                     obj_color.r = static_cast<uint8_t>(color.at(0) * 255);
                     obj_color.g = static_cast<uint8_t>(color.at(1) * 255);
                     obj_color.b = static_cast<uint8_t>(color.at(2) * 255);
                     obj_color.a = static_cast<uint8_t>(255);
-
-                    // std::cout << obj_color.r << "\t";
-                    // std::cout << obj_color.g << "\t";
-                    // std::cout << obj_color.b << "\t";
-                    // std::cout << obj_color.a << "\t";
-                    // std::cout << "\n";
 
                     DrawPixel(x, y, obj_color);
                 }

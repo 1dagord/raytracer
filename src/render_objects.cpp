@@ -192,6 +192,8 @@ RTColor lighting(RTMaterial& mat, PointLight& light, Point& p, Vector& eye_vec, 
 	RTColor res;
 	for (int i = 0; i < 3; i++) {
 		res.at(i) = ambient.at(i) + diffuse.at(i) + specular.at(i);
+		// clamp between 0.0 and 1.0
+		res.at(i) = (res.at(i) < 0.0) ? (0.0) : ((res.at(i) > 1.0) ? (1.0) : (res.at(i)));
 	}
 
 	// auto it1 = std::max_element(ambient.begin(), ambient.end());
@@ -202,11 +204,6 @@ RTColor lighting(RTMaterial& mat, PointLight& light, Point& p, Vector& eye_vec, 
 
 	// // for (int i = 0; i < 3; i++)
 	// // 	res.at(i) = ((res.at(i) - *it5) / (*it4 - *it5));
-
-	// Print resulting color
-	// for (float v : res)
-	// 	std::cout << v << " ";
-	// std::cout << std::endl;
 
 	// std::cout << *it1 << "\t\t" << *it2 << "\t\t" << *it3 << "\t\t" << *it4 <<"\n";
 
