@@ -178,15 +178,11 @@ RTColor lighting(RTMaterial& mat, PointLight& light, Point& p, Vector& eye_vec, 
 		} else {
 			// Compute specular contribution
 			float factor = std::powf(reflect_dot_eye, mat.shininess);
-			// std::cout << reflect_dot_eye << std::endl;
-			// ----- PROBLEM IS HERE -----
+
 			for (int i = 0; i < 3; i++) {
 				specular.at(i) = light.intensity.at(i) * mat.specular * factor;
 			}
-			// ----- PROBLEM IS HERE -----
-			// auto it = std::max_element(specular.begin(), specular.end());
-			// std::cout << *it << "\n";
-		}
+
 	}
 
 	RTColor res;
@@ -195,17 +191,6 @@ RTColor lighting(RTMaterial& mat, PointLight& light, Point& p, Vector& eye_vec, 
 		// clamp between 0.0 and 1.0
 		res.at(i) = (res.at(i) < 0.0) ? (0.0) : ((res.at(i) > 1.0) ? (1.0) : (res.at(i)));
 	}
-
-	// auto it1 = std::max_element(ambient.begin(), ambient.end());
-	// auto it2 = std::max_element(diffuse.begin(), diffuse.end());
-	// auto it3 = std::max_element(specular.begin(), specular.end());
-	// auto it4 = std::max_element(res.begin(), res.end());
-	// // auto it5 = std::min_element(res.begin(), res.end());
-
-	// // for (int i = 0; i < 3; i++)
-	// // 	res.at(i) = ((res.at(i) - *it5) / (*it4 - *it5));
-
-	// std::cout << *it1 << "\t\t" << *it2 << "\t\t" << *it3 << "\t\t" << *it4 <<"\n";
 
     return res;
 }

@@ -18,8 +18,6 @@
 #define BOOST_DISABLE_ASSERTS   // only use std macro-defined assert
 
 
-// PROBLEM: area where specular reflection
-// should be white is green
 void BookTest::ChapterSix_Shading() {
     Point ray_origin(0.0, 0.0, -5.0);
     Point position;
@@ -63,7 +61,7 @@ void BookTest::ChapterSix_Shading() {
                     p = r.position(h.at(0).t);
                     normal_vec = to_sphere(h.at(0).object)->normal_at(p);
                     r.direction.normalize();
-                    eye_vec = -1 * r.direction;     // when not negated, no artifact, but also no reflection
+                    eye_vec = -1 * r.direction;
                     RTMaterial mat = to_sphere(h.at(0).object)->material;
                     color = lighting(mat, light, p, eye_vec, normal_vec);
 
