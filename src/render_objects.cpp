@@ -182,7 +182,7 @@ RTColor lighting(RTMaterial& mat, PointLight& light, Point& p, Vector& eye_vec, 
 			for (int i = 0; i < 3; i++) {
 				specular.at(i) = light.intensity.at(i) * mat.specular * factor;
 			}
-
+		}
 	}
 
 	RTColor res;
