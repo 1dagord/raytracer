@@ -23,6 +23,7 @@ class BookTest {
         void ChapterFive_Shadow();
         void ChapterSix();
         void ChapterSix_Shading();
+        void ChapterSeven();
 };
 
 #endif

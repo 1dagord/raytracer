@@ -5,6 +5,7 @@
 #include <string>
 #include <any>
 #include <typeinfo>
+#include <memory>
 #include <raylib.h>
 #include <Eigen/Dense>
 #include <boost/algorithm/string.hpp>
@@ -13,9 +14,18 @@
 #include "linalg.hpp"
 #include "save_ppm.hpp"
 #include "render_objects.hpp"
+#include "world.hpp"
 #include "main.hpp"
 
 #define BOOST_DISABLE_ASSERTS   // only use std macro-defined assert
+
+void BookTest::ChapterSeven() {
+    World w = World();
+    for (const auto& obj : w.objects) {
+        assert(*to_sphere(*obj) == RTSphere(1.0) || *to_sphere(*obj) == RTSphere(0.5));
+    }
+    assert(*(w.lights.back()) == PointLight());
+}
 
 
 void BookTest::ChapterSix_Shading() {

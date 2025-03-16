@@ -4,8 +4,8 @@
 #define RENDER_OBJECTS_H
 
 #include <vector>
-#include <array>
 #include <memory>
+#include <array>
 #include <iostream>
 #include <Eigen/Dense>
 #include "linalg.hpp"
@@ -188,6 +188,15 @@ class PointLight : public RTObject {
             RTObject(pos),
             intensity(intens)
         {}
+
+        PointLight () :
+            RTObject(Point(-10, 10, -10)),
+            intensity(RTColor{1, 1, 1})
+        {}
+
+        bool operator==(const PointLight& other) const {
+            return (this->origin == other.origin && this->intensity == other.intensity);
+        }
 };
 
 RTColor lighting(RTMaterial& mat, PointLight& light, Point& p, Vector& eye_vec, Vector& normal_vec);

@@ -26,6 +26,7 @@ class Tuple : virtual public Vector4f {
             (*this)(1) /= mag;
             (*this)(2) /= mag;
         }
+
 };
 
 class Vector : public Tuple {
